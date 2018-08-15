@@ -3,6 +3,7 @@ import config
 from datetime import date
 from datetime import datetime
 from datetime import timedelta
+import re
 
 sheets = xlrd.open_workbook('activity.xls')
 table = sheets.sheet_by_name('新服')
@@ -32,7 +33,11 @@ def handle_open_type_1(row_data, check_time):
     :param check_time:
     :return:
     '''
-    start_time = str2date(config.OPEN_TYPE_DEFAULT_VALUE)
+    start_time = row_data[4]
+    if start_time == '':
+        start_time = str2date(config.OPEN_TYPE_DEFAULT_VALUE)
+    else:
+        start_time = str2date(str(int(start_time)))
 
     if row_data[9] == '':
         open_time = timedelta()
@@ -66,7 +71,7 @@ def test_2():
 
 
 def test1_1(row_data=get_row_contents(11)):
-    print('in test1_1'.center(40,'*'))
+    print('in test1_1'.center(40, '*'))
     print(is_open(row_data, '20180702000000'))
     print(is_open(row_data, '20180703000000'))
     print(is_open(row_data, '20180704000000'))
@@ -76,8 +81,9 @@ def test1_1(row_data=get_row_contents(11)):
     print(is_open(row_data, '20180708000000'))
     print(is_open(row_data, '20180709000000'))
 
+
 def test1_2(row_data=get_row_contents(106)):
-    print('in test1_2'.center(40,'*'))
+    print('in test1_2'.center(40, '*'))
     print(is_open(row_data, '20180716000000'))
     print(is_open(row_data, '20180717000000'))
     print(is_open(row_data, '20180718000000'))
@@ -90,8 +96,19 @@ def test1_2(row_data=get_row_contents(106)):
     print(is_open(row_data, '20180725000000'))
 
 
+def test1_3(row_data=get_row_contents(8)):
+    print('in test1_3'.center(40, '*'))
+    print(is_open(row_data, '20160407230000'))
+    print(is_open(row_data, '20160408000000'))
+    print(is_open(row_data, '20160408010000'))
+    print(is_open(row_data, '20160402010000'))
+    print(is_open(row_data, '20160403010000'))
+    print(is_open(row_data, '20160507010000'))
+    print(is_open(row_data, '20160508010000'))
+
 
 if __name__ == '__main__':
     test1_1()
     test1_2()
+    test1_3()
     # test_2()
