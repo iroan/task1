@@ -14,6 +14,29 @@ def get_row_contents(acticity_id):
             return table.row_values(item)
 
 
+def handle_open_type_6(row_data, check_time):
+    '''
+    处理方法:
+        1. 根据开启时间,开启后多少天开启来计算真正的开启时间.real_open_time
+        1. 如果check_time < real_open_time,返回None
+        1. 判断check_time 是否在real_open_time和其与持续时间之内
+    :param row_data:
+    :param check_time:
+    :return:
+    '''
+    pass
+    open_time = None
+    if row_data[4] == '':
+        open_time = str2date(config.OPEN_TYPE6_DEFAULT_VALUE)
+    else:
+        open_time = str2date(row_data[4])
+    offet = timedelta(days=int(row_data[9]))
+    last_time = timedelta(days=int(row_data[7]))
+    real_open_time = open_time + offet
+    check_time = str2date(check_time)
+    if check_time >= real_open_time and check_time < real_open_time + last_time:
+        return True
+
 def handle_open_type_5(row_data, check_time):
     '''
     处理方法:
@@ -143,6 +166,8 @@ def is_open(row_data, check_time):
         return handle_open_type_4(row_data, check_time)
     if row_data[6] == 5:
         return handle_open_type_5(row_data, check_time)
+    if row_data[6] == 6:
+        return handle_open_type_6(row_data, check_time)
     return False
 
 
@@ -262,21 +287,37 @@ def test5_2(row_data=get_row_contents(79)):
     assert is_open(row_data, '20180710000000') == True
 
 
+def test6_1(row_data=get_row_contents(119)):
+    print('in test6_1'.center(40, '*'))
+    assert is_open(row_data, '20180702000000') == None
+    assert is_open(row_data, '20180703000000') == None
+    assert is_open(row_data, '20180704000000') == True
+    assert is_open(row_data, '20180704000000') == True
+    assert is_open(row_data, '20180704000000') == True
+    assert is_open(row_data, '20180705000000') == True
+    assert is_open(row_data, '20180706000000') == True
+    assert is_open(row_data, '20180707000000') == True
+    assert is_open(row_data, '20180709000000') == True
+    assert is_open(row_data, '20180710000000') == True
+    assert is_open(row_data, '20180711000000') == None
+    assert is_open(row_data, '20180712000000') == None
 
 
 
 if __name__ == '__main__':
-    # test1_1()
-    # test1_2()
-    # test1_3()
+    test1_1()
+    test1_2()
+    test1_3()
 
-    # test2_1()
-    # test2_2()
+    test2_1()
+    test2_2()
 
-    # test3_1()
-    # test3_2()
+    test3_1()
+    test3_2()
 
-    # test4_1()
+    test4_1()
 
-    # test5_1()
+    test5_1()
     test5_2()
+
+    test6_1()
