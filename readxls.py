@@ -15,15 +15,6 @@ def get_row_contents(acticity_id):
 
 
 def handle_open_type_6(row_data, check_time):
-    '''
-    处理方法:
-        1. 根据开启时间,开启后多少天开启来计算真正的开启时间.real_open_time
-        1. 如果check_time < real_open_time,返回None
-        1. 判断check_time 是否在real_open_time和其与持续时间之内
-    :param row_data:
-    :param check_time:
-    :return:
-    '''
     pass
     open_time = None
     if row_data[4] == '':
@@ -39,15 +30,6 @@ def handle_open_type_6(row_data, check_time):
 
 
 def handle_open_type_5(row_data, check_time):
-    '''
-    处理方法:
-        1. 穷举法失败(因为时间'不连续')
-        1. 先判断是否大于开服时间(固定设置)和持续时间,不是返回false
-        1. 在for循环中依照轮数和间隔比较
-    :param row_data:
-    :param check_time:
-    :return:
-    '''
     check_time = str2date(check_time)
     open_time = str2date(config.OPEN_TYPE5_DEFAULT_VALUE)
     if check_time < open_time:
@@ -71,14 +53,6 @@ def handle_open_type_5(row_data, check_time):
 
 
 def handle_open_type_4(row_data, check_time):
-    '''
-    实现:
-        1. 如果持续时间为空,那么大于建角时间,就返回True
-        1. 如果持续时间不为空,那么大于建角时间与持续时间的和,就返回True
-    :param row_data:
-    :param check_time:
-    :return:
-    '''
     offset = timedelta()
     if row_data[7] != '':
         offset = timedelta(days=int(row_data[7]))
@@ -90,39 +64,23 @@ def handle_open_type_4(row_data, check_time):
 
 
 def handle_open_type_3(row_data, check_time):
-    '''
-    实现:
-        1. 如果days_later为空,只需要比较开始时间和关闭时间
-        1. 如果days_later不为空,需要添加到开始时间比较
-    :param row_data:
-    :param check_time:
-    :return:
-    '''
     offset = timedelta()
     if row_data[9] != '':
         offset = timedelta(days=int(row_data[9]))
     start_time = str2date(str(int(row_data[4])))
     end_time = str2date(str(int(row_data[5])))
     tmp = str2date(check_time)
-
-    # assert '{},{},{}'.format(start_time, tmp , end_time))
-
     if tmp >= start_time + offset and tmp < end_time + offset:
         return True
 
 
 def handle_open_type_2(row_data, check_time):
-    '''
-    如果days_later存在,需要根据默认的开服时间来计算
-    如果days_later为空,直接返回True
-    '''
     if row_data[9] == '':
         return True
     else:
         open_time = timedelta(days=int(row_data[9]))
         start_time = str2date(config.OPEN_TYPE2_DEFAULT_VALUE)
         check_time = str2date(check_time)
-        # assert '{},{}'.format(check_time, open_time + start_time))
         if check_time >= open_time + start_time:
             return True
 
@@ -132,14 +90,6 @@ def str2date(str_time, format='%Y%m%d%H%M%S'):
 
 
 def handle_open_type_1(row_data, check_time):
-    '''
-    实现方法:
-        1. 把所有有关时间的数据(字符串)都转换为datetime数据类型
-        1. 比较时间
-    :param row_data:
-    :param check_time:
-    :return:
-    '''
     start_time = row_data[4]
     if start_time == '':
         start_time = str2date(config.OPEN_TYPE_DEFAULT_VALUE)
@@ -173,7 +123,6 @@ def is_open(row_data, check_time):
         return handle_open_type_5(row_data, check_time)
     if row_data[6] == 6:
         return handle_open_type_6(row_data, check_time)
-    return False
 
 
 def test2_2():
