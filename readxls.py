@@ -1,9 +1,8 @@
 import xlrd
-
+import config
 sheets = xlrd.open_workbook('activity.xls')
 table = sheets.sheet_by_name('新服')
 rows = table.nrows
-
 
 def get_row_contents(acticity_id):
     for item in range(2, table.nrows):
@@ -18,9 +17,8 @@ def handle_open_type_2(row_data, check_time):
 
 def handle_open_type_1(row_data, check_time):
     start_time = row_data[4]
-    end_time = row_data[5]
     tmp = int(check_time)
-    if tmp < int(end_time) and tmp > int(start_time):
+    if tmp > int(config.OPEN_TYPE_DEFAULT_VALUE):
         return True
 
 
