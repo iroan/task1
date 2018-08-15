@@ -14,6 +14,23 @@ def get_row_contents(acticity_id):
             return table.row_values(item)
 
 
+def handle_open_type_4(row_data, check_time):
+    '''
+    实现:
+        1. 如果持续时间为空,那么大于建角时间,就返回True
+        1. 如果持续时间不为空,那么大于建角时间与持续时间的和,就返回True
+    :param row_data:
+    :param check_time:
+    :return:
+    '''
+    offset = timedelta()
+    if row_data[7] != '':
+        offset = timedelta(days=int(row_data[7]))
+    start_time = str2date(config.OPEN_TYPE4_DEFAULT_VALUE)
+    end_time = start_time + offset
+    tmp = str2date(check_time)
+    if tmp >= start_time and tmp <= end_time:
+        return True
 def handle_open_type_3(row_data, check_time):
     '''
     实现:
@@ -90,6 +107,8 @@ def is_open(row_data, check_time):
         return handle_open_type_2(row_data, check_time)
     if row_data[6] == 3:
         return handle_open_type_3(row_data, check_time)
+    if row_data[6] == 4:
+        return handle_open_type_4(row_data, check_time)
     return False
 
 
@@ -167,6 +186,26 @@ def test3_2(row_data=get_row_contents(6)):
     print(is_open(row_data, '20170127000000'))
 
 
+def test4_1(row_data=get_row_contents(2)):
+    print('in test4_1'.center(40, '*'))
+    print(is_open(row_data, '20180702000000'))
+    print(is_open(row_data, '20180703000000'))
+    print(is_open(row_data, '20180704000000'))
+    print(is_open(row_data, '20180705000000'))
+    print(is_open(row_data, '20180706000000'))
+    print(is_open(row_data, '20180707000000'))
+
+def test5_1(row_data=get_row_contents(77)):
+    print('in test5_1'.center(40, '*'))
+    print(is_open(row_data, '20180702000000'))
+    print(is_open(row_data, '20180703000000'))
+    print(is_open(row_data, '20180704000000'))
+    print(is_open(row_data, '20180705000000'))
+    print(is_open(row_data, '20180706000000'))
+    print(is_open(row_data, '20180707000000'))
+
+
+
 
 if __name__ == '__main__':
     # test1_1()
@@ -176,5 +215,8 @@ if __name__ == '__main__':
     # test2_1()
     # test2_2()
 
-    test3_1()
-    test3_2()
+    # test3_1()
+    # test3_2()
+
+    # test4_1()
+    test5_1()
