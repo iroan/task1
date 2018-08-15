@@ -37,6 +37,7 @@ def handle_open_type_6(row_data, check_time):
     if check_time >= real_open_time and check_time < real_open_time + last_time:
         return True
 
+
 def handle_open_type_5(row_data, check_time):
     '''
     处理方法:
@@ -86,6 +87,8 @@ def handle_open_type_4(row_data, check_time):
     tmp = str2date(check_time)
     if tmp >= start_time and tmp < end_time:
         return True
+
+
 def handle_open_type_3(row_data, check_time):
     '''
     实现:
@@ -102,10 +105,11 @@ def handle_open_type_3(row_data, check_time):
     end_time = str2date(str(int(row_data[5])))
     tmp = str2date(check_time)
 
-    # print('{},{},{}'.format(start_time, tmp , end_time))
+    # assert '{},{},{}'.format(start_time, tmp , end_time))
 
-    if tmp >= start_time and tmp < end_time + offset:
+    if tmp >= start_time + offset and tmp < end_time + offset:
         return True
+
 
 def handle_open_type_2(row_data, check_time):
     '''
@@ -118,9 +122,10 @@ def handle_open_type_2(row_data, check_time):
         open_time = timedelta(days=int(row_data[9]))
         start_time = str2date(config.OPEN_TYPE2_DEFAULT_VALUE)
         check_time = str2date(check_time)
-        # print('{},{}'.format(check_time, open_time + start_time))
+        # assert '{},{}'.format(check_time, open_time + start_time))
         if check_time >= open_time + start_time:
             return True
+
 
 def str2date(str_time, format='%Y%m%d%H%M%S'):
     return datetime.strptime(str_time, format).date()
@@ -172,91 +177,89 @@ def is_open(row_data, check_time):
 
 
 def test2_2():
-    print('in test2_2'.center(40, '*'))
     row_data = get_row_contents(32)
-    print(is_open(row_data, '20180716000000'))
-    print(is_open(row_data, '20180816000000'))
+    assert is_open(row_data, '20180716000000') == None
+    assert is_open(row_data, '20180816000000') == True
+    print('test2_2 passed!'.center(40, '*'))
 
 
 def test2_1():
-    print('in test2_1'.center(40, '*'))
     row_data = get_row_contents(1)
-    print(is_open(row_data, '20180716000000'))
-    print(is_open(row_data, '20180717000000'))
-    print(is_open(row_data, '20180718000000'))
-    print(is_open(row_data, '20180719000000'))
-    print(is_open(row_data, '20180720000000'))
+    assert is_open(row_data, '20180716000000') == True
+    assert is_open(row_data, '20180717000000') == True
+    assert is_open(row_data, '20180718000000') == True
+    assert is_open(row_data, '20180719000000') == True
+    assert is_open(row_data, '20180720000000') == True
+    print('test2_1 passed!'.center(40, '*'))
 
 
 def test1_1(row_data=get_row_contents(11)):
-    print('in test1_1'.center(40, '*'))
-    print(is_open(row_data, '20180702000000'))
-    print(is_open(row_data, '20180703000000'))
-    print(is_open(row_data, '20180704000000'))
-    print(is_open(row_data, '20180705000000'))
-    print(is_open(row_data, '20180706000000'))
-    print(is_open(row_data, '20180707000000'))
-    print(is_open(row_data, '20180708000000'))
-    print(is_open(row_data, '20180709000000'))
+    assert is_open(row_data, '20180702000000') == None
+    assert is_open(row_data, '20180703000000') == True
+    assert is_open(row_data, '20180704000000') == True
+    assert is_open(row_data, '20180705000000') == True
+    assert is_open(row_data, '20180706000000') == True
+    assert is_open(row_data, '20180707000000') == True
+    assert is_open(row_data, '20180708000000') == None
+    assert is_open(row_data, '20180709000000') == None
+    print('test1_1 passed!'.center(40, '*'))
 
 
 def test1_2(row_data=get_row_contents(106)):
-    print('in test1_2'.center(40, '*'))
-    print(is_open(row_data, '20180716000000'))
-    print(is_open(row_data, '20180717000000'))
-    print(is_open(row_data, '20180718000000'))
-    print(is_open(row_data, '20180719000000'))
-    print(is_open(row_data, '20180720000000'))
-    print(is_open(row_data, '20180721000000'))
-    print(is_open(row_data, '20180722000000'))
-    print(is_open(row_data, '20180723000000'))
-    print(is_open(row_data, '20180724000000'))
-    print(is_open(row_data, '20180725000000'))
+    assert is_open(row_data, '20180716000000') == None
+    assert is_open(row_data, '20180717000000') == True
+    assert is_open(row_data, '20180718000000') == True
+    assert is_open(row_data, '20180719000000') == True
+    assert is_open(row_data, '20180720000000') == True
+    assert is_open(row_data, '20180721000000') == True
+    assert is_open(row_data, '20180722000000') == True
+    assert is_open(row_data, '20180723000000') == True
+    assert is_open(row_data, '20180724000000') == None
+    assert is_open(row_data, '20180725000000') == None
+    print('test1_2 passed!'.center(40, '*'))
 
 
 def test1_3(row_data=get_row_contents(8)):
-    print('in test1_3'.center(40, '*'))
-    print(is_open(row_data, '20160407230000'))
-    print(is_open(row_data, '20160408000000'))
-    print(is_open(row_data, '20160408010000'))
-    print(is_open(row_data, '20160402010000'))
-    print(is_open(row_data, '20160403010000'))
-    print(is_open(row_data, '20160507010000'))
-    print(is_open(row_data, '20160508010000'))
+    assert is_open(row_data, '20160407230000') == None
+    assert is_open(row_data, '20160408000000') == True
+    assert is_open(row_data, '20160408010000') == True
+    assert is_open(row_data, '20160402010000') == None
+    assert is_open(row_data, '20160403010000') == None
+    assert is_open(row_data, '20160507010000') == None
+    assert is_open(row_data, '20160508010000') == None
+    print('test1_3 passed!'.center(40, '*'))
 
 
 def test3_1(row_data=get_row_contents(3)):
-    print('in test3_1'.center(40, '*'))
-    print(is_open(row_data, '20180803000000'))
-    print(is_open(row_data, '20180809000000'))
-    print(is_open(row_data, '20180810000000'))
-    print(is_open(row_data, '20180811000000'))
-    print(is_open(row_data, '20180812000000'))
-    print(is_open(row_data, '20180813000000'))
-    print(is_open(row_data, '20180814000000'))
+    assert is_open(row_data, '20180803000000') == None
+    assert is_open(row_data, '20180809000000') == True
+    assert is_open(row_data, '20180810000000') == True
+    assert is_open(row_data, '20180811000000') == True
+    assert is_open(row_data, '20180812000000') == True
+    assert is_open(row_data, '20180813000000') == None
+    assert is_open(row_data, '20180814000000') == None
+    print('test3_1 passed!'.center(40, '*'))
+
 
 def test3_2(row_data=get_row_contents(6)):
-    print('in test3_2'.center(40, '*'))
-    print(is_open(row_data, '20170119000000'))
-    print(is_open(row_data, '20170120000000'))
-    print(is_open(row_data, '20170124000000'))
-    print(is_open(row_data, '20170125000000'))
-    print(is_open(row_data, '20170126000000'))
-    print(is_open(row_data, '20170127000000'))
+    assert is_open(row_data, '20170119000000') == None
+    assert is_open(row_data, '20170120000000') == None
+    assert is_open(row_data, '20170124000000') == None
+    assert is_open(row_data, '20170125000000') == True
+    assert is_open(row_data, '20170126000000') == True
+    assert is_open(row_data, '20170127000000') == True
+    print('test3_2 passed!'.center(40, '*'))
 
 
 def test4_1(row_data=get_row_contents(2)):
-    print('in test4_1'.center(40, '*'))
-    print(is_open(row_data, '20180702000000'))
-    print(is_open(row_data, '20180703000000'))
-    print(is_open(row_data, '20180704000000'))
-    print(is_open(row_data, '20180705000000'))
-    print(is_open(row_data, '20180706000000'))
-    print(is_open(row_data, '20180707000000'))
+    assert is_open(row_data, '20180702000000') == None
+    assert is_open(row_data, '20180703000000') == True
+    assert is_open(row_data, '20180704000000') == True
+    assert is_open(row_data, '20180705000000') == True
+    assert is_open(row_data, '20180706000000') == None
+    assert is_open(row_data, '20180707000000') == None
+    print('test4_1 passed!'.center(40, '*'))
 
-def test5_1(row_data=get_row_contents(77)):
-    print('in test5_1'.center(40, '*'))
-    print(is_open(row_data, '20180702000000'))
 
 def test5_2(row_data=get_row_contents(79)):
     '''
@@ -275,7 +278,6 @@ def test5_2(row_data=get_row_contents(79)):
     0710,T
 
     '''
-    print('in test5_2'.center(40, '*'))
     assert is_open(row_data, '20180702000000') == None
     assert is_open(row_data, '20180703000000') == True
     assert is_open(row_data, '20180704000000') == True
@@ -285,10 +287,10 @@ def test5_2(row_data=get_row_contents(79)):
     assert is_open(row_data, '20180708000000') == None
     assert is_open(row_data, '20180709000000') == True
     assert is_open(row_data, '20180710000000') == True
+    print('test5_2 passed!'.center(40, '*'))
 
 
 def test6_1(row_data=get_row_contents(119)):
-    print('in test6_1'.center(40, '*'))
     assert is_open(row_data, '20180702000000') == None
     assert is_open(row_data, '20180703000000') == None
     assert is_open(row_data, '20180704000000') == True
@@ -301,23 +303,17 @@ def test6_1(row_data=get_row_contents(119)):
     assert is_open(row_data, '20180710000000') == True
     assert is_open(row_data, '20180711000000') == None
     assert is_open(row_data, '20180712000000') == None
-
+    print('test6_1 passed!'.center(40, '*'))
 
 
 if __name__ == '__main__':
     test1_1()
     test1_2()
     test1_3()
-
     test2_1()
     test2_2()
-
     test3_1()
     test3_2()
-
     test4_1()
-
-    test5_1()
     test5_2()
-
     test6_1()
