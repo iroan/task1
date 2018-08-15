@@ -14,6 +14,38 @@ def get_row_contents(acticity_id):
             return table.row_values(item)
 
 
+def handle_open_type_5(row_data, check_time):
+    '''
+    处理方法:
+        1. 穷举法失败(因为时间'不连续')
+        1. 先判断是否大于开服时间(固定设置)和持续时间,不是返回false
+        1. 在for循环中依照轮数和间隔比较
+    :param row_data:
+    :param check_time:
+    :return:
+    '''
+    check_time = str2date(check_time)
+    open_time = str2date(config.OPEN_TYPE5_DEFAULT_VALUE)
+    if check_time < open_time:
+        return
+
+    offset = None
+    if row_data[7] == '':
+        return
+    else:
+        offset = timedelta(days=int(row_data[7]))
+
+    times = int(row_data[11])
+    space = timedelta(days=int(row_data[12]))
+    start = open_time
+    for _time in range(times):
+        end = start + offset
+        if check_time >= start and check_time < end:
+            return True
+        start += space
+        start += offset
+
+
 def handle_open_type_4(row_data, check_time):
     '''
     实现:
@@ -29,7 +61,7 @@ def handle_open_type_4(row_data, check_time):
     start_time = str2date(config.OPEN_TYPE4_DEFAULT_VALUE)
     end_time = start_time + offset
     tmp = str2date(check_time)
-    if tmp >= start_time and tmp <= end_time:
+    if tmp >= start_time and tmp < end_time:
         return True
 def handle_open_type_3(row_data, check_time):
     '''
@@ -49,7 +81,7 @@ def handle_open_type_3(row_data, check_time):
 
     # print('{},{},{}'.format(start_time, tmp , end_time))
 
-    if tmp >= start_time and tmp <= end_time + offset:
+    if tmp >= start_time and tmp < end_time + offset:
         return True
 
 def handle_open_type_2(row_data, check_time):
@@ -96,7 +128,7 @@ def handle_open_type_1(row_data, check_time):
     down = start_time + open_time
     up = during_time + open_time + start_time
 
-    if tmp >= down and tmp <= up:
+    if tmp >= down and tmp < up:
         return True
 
 
@@ -109,6 +141,8 @@ def is_open(row_data, check_time):
         return handle_open_type_3(row_data, check_time)
     if row_data[6] == 4:
         return handle_open_type_4(row_data, check_time)
+    if row_data[6] == 5:
+        return handle_open_type_5(row_data, check_time)
     return False
 
 
@@ -198,11 +232,35 @@ def test4_1(row_data=get_row_contents(2)):
 def test5_1(row_data=get_row_contents(77)):
     print('in test5_1'.center(40, '*'))
     print(is_open(row_data, '20180702000000'))
-    print(is_open(row_data, '20180703000000'))
-    print(is_open(row_data, '20180704000000'))
-    print(is_open(row_data, '20180705000000'))
-    print(is_open(row_data, '20180706000000'))
-    print(is_open(row_data, '20180707000000'))
+
+def test5_2(row_data=get_row_contents(79)):
+    '''
+    0703,2轮3天的将=间隔,每轮持续3天
+
+    0703,F
+    0703,T
+    0704,T
+    0705,T
+
+    0706,F
+    0707,F
+    0708,F
+
+    0709,T
+    0710,T
+
+    '''
+    print('in test5_2'.center(40, '*'))
+    assert is_open(row_data, '20180702000000') == None
+    assert is_open(row_data, '20180703000000') == True
+    assert is_open(row_data, '20180704000000') == True
+    assert is_open(row_data, '20180705000000') == True
+    assert is_open(row_data, '20180706000000') == None
+    assert is_open(row_data, '20180707000000') == None
+    assert is_open(row_data, '20180708000000') == None
+    assert is_open(row_data, '20180709000000') == True
+    assert is_open(row_data, '20180710000000') == True
+
 
 
 
@@ -219,4 +277,6 @@ if __name__ == '__main__':
     # test3_2()
 
     # test4_1()
-    test5_1()
+
+    # test5_1()
+    test5_2()
