@@ -16,21 +16,36 @@ def handle_open_type_2(row_data, check_time):
 
 
 def handle_open_type_1(row_data, check_time):
-    start_time = row_data[4]
+    start_time = int(config.OPEN_TYPE_DEFAULT_VALUE)
+    during_time = row_data[7] * 1000000
     tmp = int(check_time)
-    if tmp > int(config.OPEN_TYPE_DEFAULT_VALUE):
+    if tmp >= start_time and tmp <= during_time + start_time:
         return True
-
 
 def is_open(row_data, check_time):
     if row_data[6] == 1:
-        handle_open_type_1(row_data, check_time)
+        return handle_open_type_1(row_data, check_time)
     if row_data[6] == 2:
-        handle_open_type_2(row_data, check_time)
-
+        return handle_open_type_2(row_data, check_time)
     return False
 
 
+def test_2():
+    row_data = get_row_contents(11)
+    print(is_open(row_data, '20180702000000'))
+
+def test_1():
+    row_data = get_row_contents(11)
+    print(is_open(row_data, '20180702000000'))
+    print(is_open(row_data, '20180703000000'))
+    print(is_open(row_data, '20180704000000'))
+    print(is_open(row_data, '20180705000000'))
+    print(is_open(row_data, '20180706000000'))
+    print(is_open(row_data, '20180707000000'))
+    print(is_open(row_data, '20180708000000'))
+    print(is_open(row_data, '20180709000000'))
+
+
 if __name__ == '__main__':
-    row_data = get_row_contents(32)
-    is_open(row_data, '20180703000000')
+    # test_1()
+    test_2()
