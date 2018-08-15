@@ -1,9 +1,7 @@
 import xlrd
 import config
-from datetime import date
 from datetime import datetime
 from datetime import timedelta
-import re
 
 sheets = xlrd.open_workbook('activity.xls')
 table = sheets.sheet_by_name('新服')
@@ -17,8 +15,19 @@ def get_row_contents(acticity_id):
 
 
 def handle_open_type_2(row_data, check_time):
-    pass
-
+    '''
+    如果days_later存在,需要根据默认的开服时间来计算
+    如果days_later为空,直接返回True
+    '''
+    if row_data[9] == '':
+        return True
+    else:
+        open_time = timedelta(days=int(row_data[9]))
+        start_time = str2date(config.OPEN_TYPE2_DEFAULT_VALUE)
+        check_time = str2date(check_time)
+        # print('{},{}'.format(check_time, open_time + start_time))
+        if check_time > open_time + start_time:
+            return True
 
 def str2date(str_time, format='%Y%m%d%H%M%S'):
     return datetime.strptime(str_time, format).date()
@@ -48,7 +57,7 @@ def handle_open_type_1(row_data, check_time):
     tmp = str2date(check_time)
     down = start_time + open_time
     up = during_time + open_time + start_time
-    # print('{},{},{},{}'.format(open_time, down, tmp, up))
+
     if tmp >= down and tmp <= up:
         return True
 
@@ -61,8 +70,16 @@ def is_open(row_data, check_time):
     return False
 
 
-def test_2():
-    row_data = get_row_contents(11)
+def test2_2():
+    print('in test2_2'.center(40, '*'))
+    row_data = get_row_contents(32)
+    print(is_open(row_data, '20180716000000'))
+    print(is_open(row_data, '20180816000000'))
+
+
+def test2_1():
+    print('in test2_1'.center(40, '*'))
+    row_data = get_row_contents(1)
     print(is_open(row_data, '20180716000000'))
     print(is_open(row_data, '20180717000000'))
     print(is_open(row_data, '20180718000000'))
@@ -108,7 +125,8 @@ def test1_3(row_data=get_row_contents(8)):
 
 
 if __name__ == '__main__':
-    test1_1()
-    test1_2()
-    test1_3()
-    # test_2()
+    # test1_1()
+    # test1_2()
+    # test1_3()
+    test2_1()
+    test2_2()
