@@ -157,6 +157,16 @@ def test3_1(row_data=get_row_contents(3)):
     print(is_open(row_data, '20180813000000'))
     print(is_open(row_data, '20180814000000'))
 
+def test3_2(row_data=get_row_contents(6)):
+    print('in test3_2'.center(40, '*'))
+    print(is_open(row_data, '20170119000000'))
+    print(is_open(row_data, '20170120000000'))
+    print(is_open(row_data, '20170124000000'))
+    print(is_open(row_data, '20170125000000'))
+    print(is_open(row_data, '20170126000000'))
+    print(is_open(row_data, '20170127000000'))
+
+
 
 if __name__ == '__main__':
     # test1_1()
@@ -167,3 +177,4 @@ if __name__ == '__main__':
     # test2_2()
 
     test3_1()
+    test3_2()
