@@ -14,6 +14,27 @@ def get_row_contents(acticity_id):
             return table.row_values(item)
 
 
+def handle_open_type_3(row_data, check_time):
+    '''
+    实现:
+        1. 如果days_later为空,只需要比较开始时间和关闭时间
+        1. 如果days_later不为空,需要添加到开始时间比较
+    :param row_data:
+    :param check_time:
+    :return:
+    '''
+    offset = timedelta()
+    if row_data[9] != '':
+        offset = timedelta(days=int(row_data[9]))
+    start_time = str2date(str(int(row_data[4])))
+    end_time = str2date(str(int(row_data[5])))
+    tmp = str2date(check_time)
+
+    # print('{},{},{}'.format(start_time, tmp , end_time))
+
+    if tmp >= start_time and tmp <= end_time + offset:
+        return True
+
 def handle_open_type_2(row_data, check_time):
     '''
     如果days_later存在,需要根据默认的开服时间来计算
@@ -26,7 +47,7 @@ def handle_open_type_2(row_data, check_time):
         start_time = str2date(config.OPEN_TYPE2_DEFAULT_VALUE)
         check_time = str2date(check_time)
         # print('{},{}'.format(check_time, open_time + start_time))
-        if check_time > open_time + start_time:
+        if check_time >= open_time + start_time:
             return True
 
 def str2date(str_time, format='%Y%m%d%H%M%S'):
@@ -67,6 +88,8 @@ def is_open(row_data, check_time):
         return handle_open_type_1(row_data, check_time)
     if row_data[6] == 2:
         return handle_open_type_2(row_data, check_time)
+    if row_data[6] == 3:
+        return handle_open_type_3(row_data, check_time)
     return False
 
 
@@ -124,9 +147,23 @@ def test1_3(row_data=get_row_contents(8)):
     print(is_open(row_data, '20160508010000'))
 
 
+def test3_1(row_data=get_row_contents(3)):
+    print('in test3_1'.center(40, '*'))
+    print(is_open(row_data, '20180803000000'))
+    print(is_open(row_data, '20180809000000'))
+    print(is_open(row_data, '20180810000000'))
+    print(is_open(row_data, '20180811000000'))
+    print(is_open(row_data, '20180812000000'))
+    print(is_open(row_data, '20180813000000'))
+    print(is_open(row_data, '20180814000000'))
+
+
 if __name__ == '__main__':
     # test1_1()
     # test1_2()
     # test1_3()
-    test2_1()
-    test2_2()
+
+    # test2_1()
+    # test2_2()
+
+    test3_1()
